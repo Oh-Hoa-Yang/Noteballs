@@ -7,8 +7,9 @@
         <div class="card-content">
             <div class="content">
                 {{ note.content }}
-                <div class="has-text-right has-text-grey-light mt-2">
-                    <small>{{ characterLength }}</small>
+                <div class="columns is-mobile has-text-grey-light mt-2">
+                    <small class="column">{{  dateFormatted }}</small>
+                    <small class="column has-text-right">{{ characterLength }}</small>
                 </div>
             </div>
         </div>
@@ -39,6 +40,7 @@ import { computed, reactive } from 'vue'
 import ModalDeleteNote from './ModalDeleteNote.vue'
 import { useStoreNotes } from '@/stores/storeNotes' 
 import { RouterLink } from 'vue-router'
+import { useDateFormat } from '@vueuse/core'
 
 /* props */
 const props = defineProps({
@@ -53,6 +55,18 @@ const props = defineProps({
 
 /* store */
 const storeNotes = useStoreNotes()
+
+// Window/Linux: Shift + Alt + A
+// Mac: Shift + Option + A
+// to make the block section comment 
+/* date formatted */
+const dateFormatted = computed(() => {
+    let date = new Date(parseInt(props.note.date))
+    // US Style
+    let formattedDate = useDateFormat(date, 'MM-DD-YYYY @ HH:mm:ss')
+    // console.log('Formatted: ', formattedDate)
+    return formattedDate.value
+})
 
 /* character length */
 const characterLength = computed(() => {
