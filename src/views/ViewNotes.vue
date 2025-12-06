@@ -17,6 +17,12 @@
             </template>
         </AddEditNote> 
 
+        <progress 
+                v-if="!storeNotes.notesLoaded" 
+                class="progress is-large is-success" 
+                max="100" 
+        />
+
         <!-- <pre>
             {{ newNote }}
         </pre> -->
@@ -42,13 +48,15 @@
                 </div>
             </div>
         </div> -->
+        <template v-else>
+            <Note 
+                v-for="note in storeNotes.notes"
+                :key="note.id"
+                :note="note"
+                />
+                <!-- @deleteClicked="deleteNote" -->
+        </template>
 
-<Note 
-    v-for="note in storeNotes.notes"
-    :key="note.id"
-    :note="note"
-    />
-    <!-- @deleteClicked="deleteNote" -->
 
     </div>
 </template>
