@@ -7,6 +7,8 @@ import { useStoreAuth } from './storeAuth'
 let notesCollectionRef
 let notesCollectionQuery
 
+let getNotesSnapshot = null
+
 export const useStoreNotes = defineStore('storeNotes', {
   state: () => {
     return { 
@@ -42,12 +44,21 @@ export const useStoreNotes = defineStore('storeNotes', {
     //     }
     //     // console.log('note: ', note)
     //     this.notes.push(note)
-    //   })
+    //   }) 
+      // unsubscribe from any active listener 
+      // if (getNotesSnapshot) getNotesSnapshot() 
+      // FOUND OUT: I raslised it would be better to unsubscribe when the user logs out. It doesn't make sense to leave the listener running while the user is logged out. 
+      //What you should do instead is unsubscribe in the clearNotes() action.
 
       onSnapshot(notesCollectionQuery, (querySnapshot) => {
         // console.log('querySnapshot: ', querySnapshot)
         let notes = []
-        querySnapshot.forEach((doc) => {
+        // the querySnapshot will always listening, so when 2 different user login in different browsers (etc, google, safari), then make add a note, the later login user with notes added will make the earlier browser's user become the later user's notes.
+        // So, we need to unsubscribe the querySnapshot when user logout.
+        // What we need to do? We need to make the querySnapshot to become a variable: 
+        // let getNotesSnapshot = querySnapshot...
+        // We define it outside, let getNotesSnapshot = null, so we remove the 'let' variable in here.
+        getNotesSnapshot = querySnapshot.forEach((doc) => {
           let note = {
             id: doc.id,
             content: doc.data().content,
@@ -55,7 +66,7 @@ export const useStoreNotes = defineStore('storeNotes', {
           }
           // console.log('note: ', note)
           notes.push(note)
-          })
+          })  
           // setTimeout(() => {
             this.notes = notes
             this.notesLoaded = true
@@ -64,6 +75,8 @@ export const useStoreNotes = defineStore('storeNotes', {
     },
     clearNotes() {
       this.notes = []
+      //Here (FOUND OUT)
+      if (getNotesSnapshot) getNotesSnapshot()
     },
     async addNote(newNoteContent) {
     // console.log('addNote', newNotecontent)
