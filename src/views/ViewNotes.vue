@@ -70,7 +70,7 @@
 
 <script setup>
 /* imports */
-import {ref, onMounted} from 'vue'
+import {ref} from 'vue'
 import Note from '@/components/Notes/Note.vue'
 import AddEditNote from '@/components/Notes/AddEditNote.vue'
 import { useStoreNotes } from '@/stores/storeNotes'
@@ -121,9 +121,4 @@ useWatchCharacters(newNote)
 //     console.log('deleteNote', idToDelete)
 //     notes.value = notes.value.filter(note => { return note.id != idToDelete})
 // }  
-
-/* mounted */
-onMounted(() => {
-  storeNotes.getNotes()
-})
 </script>
