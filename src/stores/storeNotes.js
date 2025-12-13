@@ -31,6 +31,10 @@ export const useStoreNotes = defineStore('storeNotes', {
       // console.log('storeAuth.user.id: ', storeAuth.user.id)
 
       notesCollectionRef = collection(db, 'users', storeAuth.user.id, 'notes')
+      // The commented code below, is used to test a security of firebase, before we make modification to the rules of firestore
+      // Since we hard-coded the id of steve, but we are logging in as jim, the jim's account, we can see the steve's notes
+      // This is a security issue, to avoid this issue happens, we edited firestore's rules, and change back to the code above, then make a log to the getNotes error (this is to see if we still using the hard-coded id, the console will shows "error.message: Missing or insufficient permissions")
+      // notesCollectionRef = collection(db, 'users', 'T8BqKRseIyNL6lPesAAfjHoKMgh2', 'notes')
       notesCollectionQuery = query(notesCollectionRef, orderBy('date', 'desc'))
       this.getNotes()
     },
@@ -71,6 +75,8 @@ export const useStoreNotes = defineStore('storeNotes', {
             this.notes = notes
             this.notesLoaded = true
           // }, 2000)
+      }, error => {
+        console.log('error.message: ', error.message)
       })
     },
     clearNotes() {
